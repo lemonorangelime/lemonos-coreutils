@@ -25,33 +25,9 @@ default: mkdir depends build
 
 depends:
 	ORIGIN="$$(pwd)"; \
-	if [ ! -d "../linked-lists" ]; then \
-		cd ..; \
-		git clone https://github.com/kitty14956590/linked-lists; \
-	else \
-		cd ../linked-lists; \
-		git pull; \
-		cd $$ORIGIN; \
-	fi
-	if [ ! -f "../linked-lists/linked.o" ]; then \
-		cd ../linked-lists; \
-		make; \
-		cd $$ORIGIN; \
-	fi
-
-	if [ ! -d "../lemonos-libc" ]; then \
-		cd ..; \
-		git clone https://github.com/kitty14956590/lemonos-libc; \
-	else \
-		cd ../lemonos-libc; \
-		git pull; \
-		cd $$ORIGIN; \
-	fi
-	if [ ! -f "../lemonos-libc/libc.a" ]; then \
-		cd ../lemonos-libc; \
-		make; \
-		cd $$ORIGIN; \
-	fi
+	cd ..; \
+	make depends; \
+	cd $$ORIGIN;
 
 mkdir:
 	mkdir -p ${BUILD_DIR}
