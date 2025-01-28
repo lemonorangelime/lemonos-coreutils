@@ -1,2 +1,2 @@
-# videod
-videod is LemonOS's window manager
+# uname
+remake of GNU's uname program
