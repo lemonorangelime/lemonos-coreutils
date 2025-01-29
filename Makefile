@@ -18,5 +18,15 @@ depends:
 	make; \
 	cd ..; \
 
+# make ram disk for LemonOS before FS drivers
+# throw uname in for testing
+initrd:
+	cp uname/uname videod/videod argvdump/argvdump /tmp
+	ORIGIN="$$(pwd)"; \
+	cd /tmp; \
+	tar -cf 1.tar uname videod argvdump; \
+	cd $$ORIGIN; \
+	cp /tmp/1.tar ./
+
 clean:
-	rm -rf lemonos-libc linked-lists
+	rm -rf lemonos-libc linked-lists 1.tar

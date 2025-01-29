@@ -13,17 +13,17 @@ void uname_show(char * value, int bit) {
 
 int main(int argc, char * argv[]) {
 	uname_state_t state;
-	state.bits.all = args_contains_long(argv, "-a", "--all");
-	state.bits.kernel_name = args_contains_long(argv, "-s", "--kernel-name");
-	state.bits.nodename = args_contains_long(argv, "-n", "--nodename");
-	state.bits.kernel_release = args_contains_long(argv, "-r", "--kernel-release");
-	state.bits.kernel_version = args_contains_long(argv, "-v", "--kernel-version");
-	state.bits.machine = args_contains_long(argv, "-m", "--machine");
-	state.bits.processor = args_contains_long(argv, "-p", "--processor");
-	state.bits.hardware_platform = args_contains_long(argv, "-i", "--hardware-platform");
-	state.bits.operating_system = args_contains_long(argv, "-o", "--operating-system");
-	state.bits.help = args_contains_long(argv, "-h", "--help");
-	state.bits.version = args_contains_long(argv, "-V", "--version");
+	state.bits.all = args_contains_long(argc, argv, "-a", "--all");
+	state.bits.kernel_name = args_contains_long(argc, argv, "-s", "--kernel-name");
+	state.bits.nodename = args_contains_long(argc, argv, "-n", "--nodename");
+	state.bits.kernel_release = args_contains_long(argc, argv, "-r", "--kernel-release");
+	state.bits.kernel_version = args_contains_long(argc, argv, "-v", "--kernel-version");
+	state.bits.machine = args_contains_long(argc, argv, "-m", "--machine");
+	state.bits.processor = args_contains_long(argc, argv, "-p", "--processor");
+	state.bits.hardware_platform = args_contains_long(argc, argv, "-i", "--hardware-platform");
+	state.bits.operating_system = args_contains_long(argc, argv, "-o", "--operating-system");
+	state.bits.help = args_contains_long(argc, argv, "-h", "--help");
+	state.bits.version = args_contains_long(argc, argv, "-V", "--version");
 	if (state.all_bits == 0) {
 		state.bits.kernel_name = 1;
 	}
