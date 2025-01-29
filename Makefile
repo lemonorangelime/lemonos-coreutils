@@ -19,12 +19,12 @@ depends:
 	cd ..; \
 
 # make ram disk for LemonOS before FS drivers
-# throw uname in for testing
+# throw everything in for testing
 initrd:
-	cp uname/uname videod/videod argvdump/argvdump /tmp
+	cp uname/uname videod/videod argvdump/argvdump cat/cat /tmp
 	ORIGIN="$$(pwd)"; \
 	cd /tmp; \
-	tar -cf 1.tar uname videod argvdump; \
+	tar -cf 1.tar uname videod argvdump cat; \
 	cd $$ORIGIN; \
 	cp /tmp/1.tar ./
 
