@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <fcntl.h>
 #include <types.h>
 #include <argv.h>
 
@@ -23,7 +24,7 @@ int main(int argc, char * argv[]) {
 		"unlicense: <https://unlicense.org>",
 		"This is public domain software: you are free to change and redistribute it.",
 		"There is NO WARRANTY, to the extent permitted by law.",
-		"Argument test program."
+		"Concatenate FILE(s) to standard output."
 	};
 	args_option_t options[] = {
 		{'A', "show-all",		0, TYPE_BOOL,	0, callback, .help="equivalent to -vET"},
