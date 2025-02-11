@@ -1,4 +1,5 @@
 #include <sys/sysinfo.h>
+#include <runtime.h>
 #include <stdio.h>
 #include <string.h>
 #include <types.h>
@@ -64,6 +65,10 @@ void callback(mypriv_t * priv, args_option_t * option, int present) {
 }
 
 void print_header(mypriv_t * priv) {
+	if (__is_lemonos) {
+		printf("               total        used        free\n");
+		return;
+	}
 	if (priv->wide) {
 		puts("               total        used        free      shared     buffers       cache   available\n");
 		return;
@@ -158,9 +163,16 @@ int main(int argc, char * argv[]) {
 	priv.info = &info;
 
 	print_header(&priv);
-	printf("Mem:    "); pn(info.totalram, &priv); pn(info.totalram - info.freeram, &priv); pn(info.freeram, &priv); pn(info.sharedram, &priv);
-	print_caches(&priv, &info);
+	printf("Mem:    "); pn(info.totalram, &priv); pn(info.totalram - info.freeram, &priv); pn(info.freeram, &priv);
+	if (!__is_lemonos) {
+		pn(info.sharedram, &priv);
+		print_caches(&priv, &info);
+	}
 	putchar('\n');
+
+	if (__is_lemonos) {
+		return 0;
+	}
 
 	printf("Swap:   "); pn(info.totalswap, &priv); pn(info.totalswap - info.freeswap, &priv); pn(info.freeswap, &priv);
 	putchar('\n');
