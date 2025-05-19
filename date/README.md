@@ -1,2 +1,2 @@
-# uname
-remake of GNU's uname program
+# date
+display date and time information

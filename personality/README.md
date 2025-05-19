@@ -1,0 +1,2 @@
+# personality
+set personality

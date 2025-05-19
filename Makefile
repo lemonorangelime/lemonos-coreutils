@@ -40,9 +40,9 @@ depends:
 # make ram disk for LemonOS before FS drivers
 # throw everything in for testing
 initrd:
-	cp uname/uname cat/cat colourtest/colourtester videod/videod free/free /tmp
+	cp personality/personality uname/uname cat/cat colourtest/colourtester windowman/windowman free/free echo/echo terminal/terminal date/date paint/paint blomfisser/blormfise 3d/3d /tmp
 	ORIGIN="$$(pwd)"; \
 	cd /tmp; \
-	tar -cf 1.tar uname cat colourtester videod free; \
+	tar -cf 1.tar personality uname cat colourtester windowman free echo terminal paint date blormfise 3d; \
 	cd $$ORIGIN; \
 	cp /tmp/1.tar ./

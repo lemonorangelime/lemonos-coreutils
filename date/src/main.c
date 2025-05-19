@@ -1,7 +1,6 @@
-#include <sys/utsname.h>
 #include <stdio.h>
-#include <argv.h>
-#include <runtime.h>
+#include <time.h>
 
 int main(int argc, char * argv[]) {
+	printf("%u\n", get_timer_timestamp());
 }

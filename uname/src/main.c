@@ -53,7 +53,7 @@ int main(int argc, char * argv[]) {
 				printf("  -h, --help     display this help and exit\n");
 				printf("  -V, --version  output version information and exit\n");
 				printf("\n");
-				printf("Get source at <https://github.com/kitty14956590/lemonos-coreutils>\n");
+				printf("License unlicense <https://unlicense.org>\n");
 		}
 		return 0;
 	}
