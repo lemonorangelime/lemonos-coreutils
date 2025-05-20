@@ -4,7 +4,7 @@ CC := gcc
 S := gcc
 ASM := nasm
 ASMFLAGS := -f elf32
-CCFLAGS := -O3 -fno-stack-protector -D __LEMONOS__ -fPIE -msse -msse2 -mno-avx -mhard-float -static -m32 -fno-builtin -fno-builtin-function -fomit-frame-pointer -funsigned-char -falign-functions=16 -nostdlib -nostartfiles -funsigned-char -I../lemonos-libc/include -I../linked-lists/include -Iinclude
+CCFLAGS := -O0 -fno-stack-protector -D __LEMONOS__ -fPIE -mno-sse -mno-avx -mhard-float -static -m32 -fno-builtin -fno-builtin-function -fomit-frame-pointer -funsigned-char -falign-functions=16 -nostdlib -nostartfiles -funsigned-char -I../lemonos-libc/include -I../linked-lists/include -Iinclude
 LD := ld
 LDFLAGS := -m elf_i386 --no-dynamic-linker -pie
 MAKE := make

@@ -19,7 +19,7 @@ ASM_OBJS=$(patsubst src/%.asm,$(BUILD_DIR)/%.o,$(ASM_SOURCES))
 LINKED := ../linked-lists/linked.o
 LIBC := ../lemonos-libc/libc.a
 LINK_FILE := ../lemonos-libc/link.ld
-OUTPUT := date
+OUTPUT := gradient
 
 default: mkdir depends build
 
