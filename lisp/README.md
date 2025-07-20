@@ -1,2 +1,0 @@
-# lisp
-LemonOS lisp interpreteterterterterter

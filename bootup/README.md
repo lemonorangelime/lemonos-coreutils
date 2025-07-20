@@ -1,0 +1,2 @@
+# bootup
+booting anm,iation

@@ -2,7 +2,7 @@ DIRS := $(wildcard */)
 DIRS := $(filter-out linked-lists, $(DIRS))
 DIRS := $(filter-out lemonos-libc, $(DIRS))
 
-default: depends build initrd
+default: build initrd
 
 build: $(DIRS)
 	for i in $^; do \
@@ -17,32 +17,14 @@ clean: $(DIRS)
 		make clean; \
 		cd ..; \
 	done
-	rm -rf linked-lists lemonos-libc 1.tar
-
-depends:
-	if [ ! -d "./lemonos-libc" ]; then \
-		git clone https://github.com/kitty14956590/lemonos-libc; \
-	fi
-	if [ ! -d "./linked-lists" ]; then \
-		git clone https://github.com/kitty14956590/linked-lists; \
-	fi
-
-	cd linked-lists; \
-	git pull; \
-	make; \
-	cd ..;
-
-	cd lemonos-libc; \
-	git pull; \
-	make; \
-	cd ..;
+	rm -rf 1.tar
 
 # make ram disk for LemonOS before FS drivers
 # throw everything in for testing
 initrd:
-	cp personality/personality uname/uname cat/cat colourtest/colourtester windowman/windowman free/free echo/echo terminal/terminal date/date paint/paint blomfisser/blormfise 3d/3d gradient/gradient /tmp
+	cp personality/personality uname/uname cat/cat colourtest/colourtester windowman/windowman free/free echo/echo terminal/terminal date/date paint/paint blomfisser/blormfise 3d/3d gradient/gradient depthtest/depthtest sysrq/sysrq udp_probe/udp_probe print/print dispman/dispman birdtest/birdtest ls/ls touch/touch fstest/fstest screenshot/screenshot cp/cp /tmp
 	ORIGIN="$$(pwd)"; \
 	cd /tmp; \
-	tar -cf 1.tar personality uname cat colourtester windowman free echo terminal paint date blormfise 3d gradient; \
+	tar -cf 1.tar personality uname cat colourtester windowman free echo terminal paint date blormfise 3d gradient depthtest sysrq udp_probe print dispman birdtest touch ls fstest screenshot cp; \
 	cd $$ORIGIN; \
 	cp /tmp/1.tar ./

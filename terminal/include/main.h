@@ -10,11 +10,18 @@ typedef struct {
 } terminal_input_t;
 
 typedef struct {
+	uint16_t character;
+	uint32_t background_colour;
+	uint32_t foreground_colour;
+} __attribute__((packed)) terminal_char_t;
+
+typedef struct {
 	int width;
 	int height;
 	int has_colour;
 	uint32_t background_colour;
-	uint16_t * text;
+	uint32_t foreground_colour;
+	terminal_char_t * text;
 	int x;
 	int y;
 	int cwidth;

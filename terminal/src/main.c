@@ -16,16 +16,16 @@
 #include <main.h>
 #include <lexer.h>
 
-void render_frame(window_t * window, terminal_spec_t * terminal, uint16_t * text) {
+void render_frame(window_t * window, terminal_spec_t * terminal, terminal_char_t * text) {
 	rect_2d_t * rect = &window->rect;
 	memset32(rect->fb, terminal->background_colour, rect->size.width * rect->size.height);
 	for (int y = 0; y < terminal->cheight; y++) {
 		for (int x = 0; x < terminal->cwidth; x++) {
-			uint16_t codepoint = text[(y * terminal->cwidth) + x];
-			if (codepoint == 0) {
+			terminal_char_t * chr = &text[(y * terminal->cwidth) + x];
+			if (chr->character == 0) {
 				continue;
 			}
-			font_draw(font_get(terminal->font, codepoint), 0xffffffff, x * 8, y * 16, rect->size.width, rect->fb);
+			font_draw(font_get(terminal->font, chr->character), chr->foreground_colour, x * 8, y * 16, rect->size.width, rect->fb);
 		}
 	}
 }
@@ -96,15 +96,17 @@ void handle_argv(terminal_spec_t * termspec, int argc, char * argv[]) {
 }
 
 void terminal_scroll(terminal_spec_t * terminal) {
-	uint16_t * text = terminal->text;
+	terminal_char_t * text = terminal->text;
 	for (int y = 1; y < terminal->cheight; y++) {
 		for (int x = 0; x < terminal->cwidth; x++) {
-			text[((y - 1) * terminal->cwidth) + x] = text[(y * terminal->cwidth) + x];
+			terminal_char_t * dest = &text[((y - 1) * terminal->cwidth) + x];
+			terminal_char_t * src = &text[(y * terminal->cwidth) + x];
+			*dest = *src;
 		}
 	}
 	int y = terminal->cheight - 1;
 	for (int x = 0; x < terminal->cwidth; x++) {
-		text[(y * terminal->cwidth) + x] = u'\0';
+		text[(y * terminal->cwidth) + x].character = u'\0';
 	}
 	terminal->redraw_needed = 1;
 }
@@ -124,7 +126,7 @@ void terminal_fixup(terminal_spec_t * terminal) {
 	}
 }
 
-uint16_t * terminal_get_character(terminal_spec_t * terminal, int x, int y) {
+terminal_char_t * terminal_get_character(terminal_spec_t * terminal, int x, int y) {
 	return &terminal->text[(y * terminal->cwidth) + x];
 }
 
@@ -169,8 +171,8 @@ int terminal_handle_escapes(uint16_t * chrp, terminal_spec_t * terminal, int inp
 					return 1;
 				}
 			}
-			uint16_t * c = terminal_get_character(terminal, --terminal->x, terminal->y);
-			*c = u'\0';
+			terminal_char_t * c = terminal_get_character(terminal, --terminal->x, terminal->y);
+			c->character = u'\0';
 
 			terminal_fixup(terminal);
 			terminal->redraw_needed = 1;
@@ -183,8 +185,10 @@ void terminal_handle_input(uint16_t chr, terminal_spec_t * terminal, int input) 
 	if (terminal_handle_escapes(&chr, terminal, input)) {
 		return;
 	}
-	uint16_t * c = terminal_get_character(terminal, terminal->x++, terminal->y);
-	*c = chr;
+	terminal_char_t * c = terminal_get_character(terminal, terminal->x++, terminal->y);
+	c->character = chr;
+	c->foreground_colour = terminal->foreground_colour;
+	c->background_colour = terminal->background_colour;
 	if (input) {
 		terminal_write_input(&chr, 1, terminal);
 	}
@@ -227,6 +231,7 @@ void terminal_write_input(uint16_t * str, int size, terminal_spec_t * terminal) 
 
 void terminal_write_handler(ansi_state_t * state, void * buffer, size_t size) {
 	terminal_spec_t * terminal = state->priv;
+	terminal->foreground_colour = state->colour;
 	terminal_writel(buffer, size, terminal);
 }
 
@@ -265,12 +270,9 @@ void terminal_exec(char * name, terminal_spec_t * terminal) {
 
 	process_t * process = (process_t *) lctl(LCTL_GET_PCB, pid);
 
-	//volatile uint32_t handler = (uint32_t) ansi_handler;
-	//volatile uint32_t constructor = (uint32_t) ansi_constructor;
-	//printf("%r\n", terminal_write_handler);
-	//prctl(PR_HOOK_STDOUT, pid, 0, handler, constructor);
-	//ansi_set_priv(process, terminal);
-	//ansi_set_writer(process, (void *) write_handler);
+	prctl(PR_HOOK_STDOUT, pid, 0, ansi_handler, ansi_constructor);
+	ansi_set_priv(process, terminal);
+	ansi_set_writer(process, (void *) terminal_write_handler);
 
 	process->killed = 0;
 }
@@ -299,14 +301,15 @@ int main(int argc, char * argv[]) {
 		return -1;
 	}
 
-	terminal_spec_t spec = {420, 240, 1, 0xff000000, NULL, 0, 0};
+	terminal_spec_t spec = {420, 240, 1, 0xff000000, 0xffffffff, NULL, 0, 0};
 	handle_argv(&spec, argc, argv);
 	spec.cwidth = spec.width / 8;
 	spec.cheight = spec.height / 16;
-	spec.text = malloc((spec.cwidth * spec.cheight) * 2);
+	spec.text = malloc((spec.cwidth * spec.cheight) * sizeof(terminal_char_t));
 	spec.font = font_load();
 	spec.input.buffer = NULL;
-	memset(spec.text, 0, (spec.cwidth * spec.cheight) * 2);
+
+	memset(spec.text, 0, (spec.cwidth * spec.cheight) * sizeof(terminal_char_t));
 	spec.waitfor = 0;
 	spec.redraw_needed = 1;
 
@@ -323,6 +326,7 @@ int main(int argc, char * argv[]) {
 			if (spec.waitfor) {
 				if (!lctl(LCTL_GET_PCB, spec.waitfor)) {
 					spec.waitfor = 0;
+					spec.foreground_colour = 0xffffffff;
 					terminal_prompt(&spec);
 				}
 			}
